@@ -123,6 +123,13 @@
                     searchGames();
                 }
             });
+            
+            // Desktop search input event listener
+            document.getElementById('search-input-desktop').addEventListener('keyup', (e) => {
+                if (e.key === 'Enter') {
+                    searchGames();
+                }
+            });
         });
         
         // Render games grid
@@ -130,6 +137,7 @@
             currentCategory = category;
             searchQuery = '';
             document.getElementById('search-input').value = '';
+            document.getElementById('search-input-desktop').value = '';
             
             const container = document.getElementById('games-container');
             container.innerHTML = '';
@@ -148,26 +156,28 @@
                 return;
             }
             
-            games.forEach((game, index) => {
-                if (index % 4 === 0) {
-                    const row = document.createElement('div');
-                    row.className = 'flex justify-center gap-6 mb-8';
-                    container.appendChild(row);
-                }
-                
-                const lastRow = container.lastChild;
+            // Create a grid container for the games
+            const grid = document.createElement('div');
+            grid.className = 'flex flex-wrap justify-center gap-4 w-full px-4';
+            container.appendChild(grid);
+            
+            games.forEach((game) => {
                 const gameCard = createGameCard(game);
-                lastRow.appendChild(gameCard);
+                grid.appendChild(gameCard);
             });
         }
         
         // Create game card element
         function createGameCard(game) {
             const card = document.createElement('div');
-            card.className = 'game-card bg-darker rounded-xl p-4 w-64 flex flex-col items-center transition-all duration-300 hover:scale-105 cursor-pointer border border-white/10 hover:border-white/30 hover:shadow-glow';
+            card.className = 'game-card bg-darker rounded-xl p-4 flex flex-col items-center transition-all duration-300 hover:scale-105 cursor-pointer border border-white/10 hover:border-white/30 hover:shadow-glow';
+            card.style.width = 'calc(25% - 1rem)';
+            card.style.minWidth = '250px';
+            card.style.maxWidth = '300px';
+            card.style.flexGrow = '1';
             
             const thumbnail = document.createElement('div');
-            thumbnail.className = 'w-full h-40 bg-gray-800 rounded-lg mb-3 overflow-hidden';
+            thumbnail.className = 'w-full aspect-video bg-gray-800 rounded-lg mb-3 overflow-hidden';
             thumbnail.style.backgroundImage = `url('${game.thumbnail}')`;
             thumbnail.style.backgroundSize = 'cover';
             thumbnail.style.backgroundPosition = 'center';
@@ -200,7 +210,8 @@
         
         // Search games
         function searchGames() {
-            const query = document.getElementById('search-input').value.toLowerCase().trim();
+            const query = document.getElementById('search-input').value.toLowerCase().trim() || 
+                          document.getElementById('search-input-desktop').value.toLowerCase().trim();
             searchQuery = query;
             
             const container = document.getElementById('games-container');
@@ -211,33 +222,28 @@
                 return;
             }
             
-            const results = [];
-            for (const category in gamesDB) {
-                gamesDB[category].forEach(game => {
-                    if (game.name.toLowerCase().includes(query)) {
-                        results.push(game);
-                    }
-                });
-            }
-            
             const title = document.getElementById('page-title');
             title.textContent = `Search Results for "${query}"`;
             
+            // Search only in the home category games for exact matches
+            const homeGames = gamesDB['home'];
+            const results = homeGames.filter(game => 
+                game.name.toLowerCase().includes(query)
+            );
+            
             if (results.length === 0) {
-                container.innerHTML = '<p class="text-white/70 text-center col-span-4 py-12">No games found</p>';
+                container.innerHTML = '<p class="text-white/70 text-center col-span-4 py-12">No games found matching "' + query + '"</p>';
                 return;
             }
             
-            results.forEach((game, index) => {
-                if (index % 4 === 0) {
-                    const row = document.createElement('div');
-                    row.className = 'flex justify-center gap-6 mb-8';
-                    container.appendChild(row);
-                }
-                
-                const lastRow = container.lastChild;
+            // Create a grid container for search results
+            const grid = document.createElement('div');
+            grid.className = 'flex flex-wrap justify-center gap-4 w-full px-4';
+            container.appendChild(grid);
+            
+            results.forEach((game) => {
                 const gameCard = createGameCard(game);
-                lastRow.appendChild(gameCard);
+                grid.appendChild(gameCard);
             });
         }
         
@@ -365,6 +371,25 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #444;
         }
+        
+        @media (max-width: 1024px) {
+            .game-card {
+                width: calc(33.333% - 1rem) !important;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .game-card {
+                width: calc(50% - 1rem) !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .game-card {
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+        }
     </style>
     <link id="favicon" rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>">
 </head>
@@ -483,10 +508,10 @@
     </div>
     
     <!-- Main content -->
-    <main class="flex-grow container mx-auto px-4 py-8">
+    <main class="flex-grow container mx-auto px-0 py-8">
         <h2 id="page-title" class="text-2xl font-bold text-white mb-8 text-center">Popular Games</h2>
         
-        <div id="games-container" class="space-y-8">
+        <div id="games-container" class="flex flex-wrap justify-center gap-4 w-full px-4">
             <!-- Games will be loaded here -->
         </div>
     </main>
