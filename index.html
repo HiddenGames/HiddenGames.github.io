@@ -20,6 +20,7 @@
         }
         #mobile-menu {
             transition: transform 0.3s ease, opacity 0.3s ease;
+            background-color: #0a0a0a;
         }
         #game-modal {
             transition: opacity 0.3s ease;
@@ -39,6 +40,20 @@
             background: #444;
         }
         
+        .search-input {
+            background-color: #111 !important;
+            border-color: #222 !important;
+            color: white !important;
+        }
+        
+        .search-input::placeholder {
+            color: #666 !important;
+        }
+        
+        .clear-search-btn {
+            right: 2.5rem !important;
+        }
+
         @media (max-width: 1024px) {
             .game-card {
                 width: calc(33.333% - 1rem) !important;
@@ -58,7 +73,6 @@
             }
         }
         
-        /* Fullscreen styles */
         :fullscreen #game-frame-container {
             width: 100vw;
             height: 100vh;
@@ -88,6 +102,15 @@
             height: 100%;
             border: none;
         }
+        
+        .menu-open #site-title,
+        .menu-open #mobile-menu-btn {
+            display: none !important;
+        }
+        
+        #mobile-menu {
+            z-index: 1000;
+        }
     </style>
     <link id="favicon" rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>">
 </head>
@@ -95,32 +118,29 @@
     <!-- Header -->
     <header class="bg-dark py-4 border-b border-white/10 sticky top-0 z-50">
         <div class="container mx-auto px-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-center flex-grow text-white">HiddenGames</h1>
+            <h1 id="site-title" class="text-2xl font-bold text-center flex-grow text-white">HiddenGames</h1>
             
-            <!-- Desktop nav -->
             <div class="hidden md:flex items-center gap-4">
                 <div class="relative">
                     <input type="text" id="search-input-desktop" placeholder="Search games..." 
-                           class="bg-darker text-white px-4 py-2 rounded-full border border-white/10 focus:outline-none focus:ring-1 focus:ring-white/30 text-sm w-64">
+                           class="search-input px-4 py-2 rounded-full border focus:outline-none focus:ring-1 focus:ring-white/30 text-sm w-64">
                     <button onclick="searchGames()" class="absolute right-3 top-2 text-white/50 hover:text-white">
                         <i class="fas fa-search"></i>
                     </button>
                 </div>
-                
                 <button onclick="toggleMenu()" class="text-white hover:text-white/80">
                     <i class="fas fa-bars text-xl"></i>
                 </button>
             </div>
             
-            <!-- Mobile menu button -->
-            <button onclick="toggleMenu()" class="md:hidden text-white hover:text-white/80">
+            <button id="mobile-menu-btn" onclick="toggleMenu()" class="md:hidden text-white hover:text-white/80">
                 <i class="fas fa-bars text-xl"></i>
             </button>
         </div>
     </header>
-    
+
     <!-- Mobile menu -->
-    <div id="mobile-menu" class="hidden fixed inset-0 bg-dark/95 backdrop-blur-sm z-40 p-6 overflow-y-auto">
+    <div id="mobile-menu" class="hidden fixed inset-0 z-40 p-6 overflow-y-auto">
         <div class="flex justify-between items-center mb-8">
             <h2 class="text-xl font-bold text-white">Menu</h2>
             <button onclick="toggleMenu()" class="text-white text-2xl hover:text-white/70">
@@ -131,8 +151,8 @@
         <div class="mb-6">
             <div class="relative">
                 <input type="text" id="search-input" placeholder="Search games..." 
-                       class="w-full bg-darker text-white px-4 py-3 rounded-lg border border-white/10 focus:outline-none focus:ring-1 focus:ring-white/30">
-                <button onclick="searchGames(); toggleMenu();" class="absolute right-3 top-3 text-white/50 hover:text-white">
+                       class="search-input w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-1 focus:ring-white/30">
+                <button onclick="searchGames()" class="absolute right-3 top-3 text-white/50 hover:text-white clear-search-btn">
                     <i class="fas fa-search"></i>
                 </button>
             </div>
@@ -186,7 +206,7 @@
             </button>
         </nav>
     </div>
-    
+
     <!-- Main content -->
     <main class="flex-grow container mx-auto px-0 py-8">
         <h2 id="page-title" class="text-2xl font-bold text-white mb-8 text-center">Popular Games</h2>
@@ -195,7 +215,7 @@
             <!-- Games will be loaded here -->
         </div>
     </main>
-    
+
     <!-- Game modal -->
     <div id="game-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div id="modal-content" class="bg-dark rounded-xl w-full max-w-4xl max-h-[90vh] overflow-hidden border border-white/10 shadow-xl">
@@ -217,7 +237,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Footer -->
     <footer class="bg-dark py-6 border-t border-white/10">
         <div class="container mx-auto px-4 text-center text-white/50 text-sm">
@@ -226,7 +246,6 @@
     </footer>
 
     <script>
-        // Games database with 8 popular games
         const gamesDB = {
             home: [
                 { 
@@ -278,99 +297,89 @@
                     filename: "games/basketball.html"
                 }
             ],
-            racing: Array(8).fill().map((_, i) => ({ 
+            racing: Array(16).fill().map((_, i) => ({ 
                 name: `Racing Game ${i+1}`, 
                 category: "Racing", 
                 thumbnail: `https://via.placeholder.com/300x200/333/fff?text=Racing+${i+1}`,
                 filename: `games/racing${i+1}.html`
             })),
-            puzzle: Array(8).fill().map((_, i) => ({ 
+            puzzle: Array(16).fill().map((_, i) => ({ 
                 name: `Puzzle Game ${i+1}`, 
                 category: "Puzzle", 
                 thumbnail: `https://via.placeholder.com/300x200/333/fff?text=Puzzle+${i+1}`,
                 filename: `games/puzzle${i+1}.html`
             })),
-            platformer: Array(8).fill().map((_, i) => ({ 
+            platformer: Array(16).fill().map((_, i) => ({ 
                 name: `Platformer Game ${i+1}`, 
                 category: "Platformer", 
                 thumbnail: `https://via.placeholder.com/300x200/333/fff?text=Platformer+${i+1}`,
                 filename: `games/platformer${i+1}.html`
             })),
-            action: Array(8).fill().map((_, i) => ({ 
+            action: Array(16).fill().map((_, i) => ({ 
                 name: `Action Game ${i+1}`, 
                 category: "Action", 
                 thumbnail: `https://via.placeholder.com/300x200/333/fff?text=Action+${i+1}`,
                 filename: `games/action${i+1}.html`
             })),
-            adventure: Array(8).fill().map((_, i) => ({ 
+            adventure: Array(16).fill().map((_, i) => ({ 
                 name: `Adventure Game ${i+1}`, 
                 category: "Adventure", 
                 thumbnail: `https://via.placeholder.com/300x200/333/fff?text=Adventure+${i+1}`,
                 filename: `games/adventure${i+1}.html`
             })),
-            strategy: Array(8).fill().map((_, i) => ({ 
+            strategy: Array(16).fill().map((_, i) => ({ 
                 name: `Strategy Game ${i+1}`, 
                 category: "Strategy", 
                 thumbnail: `https://via.placeholder.com/300x200/333/fff?text=Strategy+${i+1}`,
                 filename: `games/strategy${i+1}.html`
             })),
-            sports: Array(8).fill().map((_, i) => ({ 
+            sports: Array(16).fill().map((_, i) => ({ 
                 name: `Sports Game ${i+1}`, 
                 category: "Sports", 
                 thumbnail: `https://via.placeholder.com/300x200/333/fff?text=Sports+${i+1}`,
                 filename: `games/sports${i+1}.html`
             })),
-            shooting: Array(8).fill().map((_, i) => ({ 
+            shooting: Array(16).fill().map((_, i) => ({ 
                 name: `Shooting Game ${i+1}`, 
                 category: "Shooting", 
                 thumbnail: `https://via.placeholder.com/300x200/333/fff?text=Shooting+${i+1}`,
                 filename: `games/shooting${i+1}.html`
             })),
-            multiplayer: Array(8).fill().map((_, i) => ({ 
+            multiplayer: Array(16).fill().map((_, i) => ({ 
                 name: `Multiplayer Game ${i+1}`, 
                 category: "Multiplayer", 
                 thumbnail: `https://via.placeholder.com/300x200/333/fff?text=Multiplayer+${i+1}`,
                 filename: `games/multiplayer${i+1}.html`
             })),
-            idle: Array(8).fill().map((_, i) => ({ 
+            idle: Array(16).fill().map((_, i) => ({ 
                 name: `Idle Game ${i+1}`, 
                 category: "Idle", 
                 thumbnail: `https://via.placeholder.com/300x200/333/fff?text=Idle+${i+1}`,
                 filename: `games/idle${i+1}.html`
             }))
         };
-        
-        // Current state
+
         let currentCategory = 'home';
         let searchQuery = '';
         let isFullscreen = false;
-        
-        // Initialize page
+
         document.addEventListener('DOMContentLoaded', () => {
             renderGames('home');
             
-            // Search input event listener
             document.getElementById('search-input').addEventListener('keyup', (e) => {
-                if (e.key === 'Enter') {
-                    searchGames();
-                }
+                if (e.key === 'Enter') searchGames();
             });
             
-            // Desktop search input event listener
             document.getElementById('search-input-desktop').addEventListener('keyup', (e) => {
-                if (e.key === 'Enter') {
-                    searchGames();
-                }
+                if (e.key === 'Enter') searchGames();
             });
             
-            // Listen for fullscreen changes
             document.addEventListener('fullscreenchange', updateFullscreenButton);
             document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
             document.addEventListener('mozfullscreenchange', updateFullscreenButton);
             document.addEventListener('MSFullscreenChange', updateFullscreenButton);
         });
-        
-        // Render games grid
+
         function renderGames(category) {
             currentCategory = category;
             searchQuery = '';
@@ -383,51 +392,39 @@
             const games = gamesDB[category];
             const title = document.getElementById('page-title');
             
-            if (category === 'home') {
-                title.textContent = 'Popular Games';
-            } else {
-                title.textContent = `${category.charAt(0).toUpperCase() + category.slice(1)} Games`;
-            }
-            
-            if (!games || games.length === 0) {
+            title.textContent = category === 'home' 
+                ? 'Popular Games' 
+                : `${category.charAt(0).toUpperCase() + category.slice(1)} Games`;
+
+            if (!games?.length) {
                 container.innerHTML = '<p class="text-white/70 text-center col-span-4 py-12">No games found</p>';
                 return;
             }
-            
-            // Create a grid container for the games
+
             const grid = document.createElement('div');
             grid.className = 'flex flex-wrap justify-center gap-4 w-full px-4';
             container.appendChild(grid);
-            
-            games.forEach((game) => {
-                const gameCard = createGameCard(game);
-                grid.appendChild(gameCard);
-            });
+
+            games.forEach(game => grid.appendChild(createGameCard(game)));
         }
-        
-        // Create game card element
+
         function createGameCard(game) {
             const card = document.createElement('div');
             card.className = 'game-card bg-darker rounded-xl p-4 flex flex-col items-center transition-all duration-300 hover:scale-105 cursor-pointer border border-white/10 hover:border-white/30 hover:shadow-glow';
-            card.style.width = 'calc(25% - 1rem)';
-            card.style.minWidth = '250px';
-            card.style.maxWidth = '300px';
-            card.style.flexGrow = '1';
-            
+            card.style.cssText = 'width: calc(25% - 1rem); min-width: 250px; max-width: 300px; flex-grow: 1;';
+
             const thumbnail = document.createElement('div');
             thumbnail.className = 'w-full aspect-video bg-gray-800 rounded-lg mb-3 overflow-hidden';
-            thumbnail.style.backgroundImage = `url('${game.thumbnail}')`;
-            thumbnail.style.backgroundSize = 'cover';
-            thumbnail.style.backgroundPosition = 'center';
-            
+            thumbnail.style.cssText = `background-image: url('${game.thumbnail}'); background-size: cover; background-position: center;`;
+
             const title = document.createElement('h3');
             title.className = 'text-white text-center font-medium mb-1 text-lg w-full truncate';
             title.textContent = game.name;
-            
+
             const category = document.createElement('span');
             category.className = 'text-white/50 text-sm';
             category.textContent = game.category;
-            
+
             const playBtn = document.createElement('button');
             playBtn.className = 'mt-3 px-5 py-1.5 bg-white/5 border border-white/20 rounded-full text-white hover:bg-white/10 transition-all duration-300 text-sm';
             playBtn.textContent = 'Play';
@@ -435,20 +432,12 @@
                 e.stopPropagation();
                 openGameModal(game);
             };
-            
-            card.appendChild(thumbnail);
-            card.appendChild(title);
-            card.appendChild(category);
-            card.appendChild(playBtn);
-            
-            card.onclick = () => {
-                openGameModal(game);
-            };
-            
+
+            card.append(thumbnail, title, category, playBtn);
+            card.onclick = () => openGameModal(game);
             return card;
         }
-        
-        // Search games
+
         function searchGames() {
             const query = document.getElementById('search-input').value.toLowerCase().trim() || 
                           document.getElementById('search-input-desktop').value.toLowerCase().trim();
@@ -457,46 +446,32 @@
             const container = document.getElementById('games-container');
             container.innerHTML = '';
             
-            if (!query) {
-                renderGames(currentCategory);
-                return;
-            }
+            if (!query) return renderGames(currentCategory);
+
+            document.getElementById('page-title').textContent = `Search Results for "${query}"`;
             
-            const title = document.getElementById('page-title');
-            title.textContent = `Search Results for "${query}"`;
-            
-            // Search all games across all categories
-            const allGames = Object.values(gamesDB).flat();
-            const results = allGames.filter(game => 
+            const results = Object.values(gamesDB).flat().filter(game => 
                 game.name.toLowerCase().includes(query) || 
                 game.category.toLowerCase().includes(query)
             );
-            
-            if (results.length === 0) {
-                container.innerHTML = '<p class="text-white/70 text-center col-span-4 py-12">No games found matching "' + query + '"</p>';
+
+            if (!results.length) {
+                container.innerHTML = `<p class="text-white/70 text-center col-span-4 py-12">No games found matching "${query}"</p>`;
                 return;
             }
-            
-            // Create a grid container for search results
+
             const grid = document.createElement('div');
             grid.className = 'flex flex-wrap justify-center gap-4 w-full px-4';
             container.appendChild(grid);
-            
-            results.forEach((game) => {
-                const gameCard = createGameCard(game);
-                grid.appendChild(gameCard);
-            });
+            results.forEach(game => grid.appendChild(createGameCard(game)));
         }
-        
-        // Open game modal
+
         function openGameModal(game) {
             const modal = document.getElementById('game-modal');
             const modalTitle = document.getElementById('modal-title');
             const gameContainer = document.getElementById('game-frame-container');
             
             modalTitle.textContent = game.name;
-            
-            // Clear previous content
             gameContainer.innerHTML = `
                 <div class="w-full h-full flex items-center justify-center">
                     <div class="text-center">
@@ -505,11 +480,10 @@
                     </div>
                 </div>
             `;
-            
+
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
-            
-            // Create iframe to load the game
+
             setTimeout(() => {
                 gameContainer.innerHTML = `
                     <iframe 
@@ -519,102 +493,54 @@
                         sandbox="allow-scripts allow-same-origin"
                     ></iframe>
                 `;
-                
-                // Update fullscreen button state
                 updateFullscreenButton();
             }, 500);
         }
-        
-        // Close modal
+
         function closeModal() {
-            // Exit fullscreen first if active
-            if (document.fullscreenElement || 
-                document.webkitFullscreenElement || 
-                document.mozFullScreenElement || 
-                document.msFullscreenElement) {
-                exitFullscreen();
-            }
+            if (document.fullscreenElement) exitFullscreen();
             
-            const modal = document.getElementById('game-modal');
-            const gameContainer = document.getElementById('game-frame-container');
-            
-            // Clear the iframe
-            gameContainer.innerHTML = '';
-            
-            modal.classList.add('hidden');
+            document.getElementById('game-modal').classList.add('hidden');
+            document.getElementById('game-frame-container').innerHTML = '';
             document.body.style.overflow = 'auto';
         }
-        
-        // Toggle fullscreen
+
         function toggleFullscreen() {
             const container = document.getElementById('game-frame-container');
-            
-            if (!document.fullscreenElement && 
-                !document.webkitFullscreenElement && 
-                !document.mozFullScreenElement && 
-                !document.msFullscreenElement) {
-                enterFullscreen(container);
-            } else {
-                exitFullscreen();
-            }
+            !document.fullscreenElement ? enterFullscreen(container) : exitFullscreen();
         }
-        
-        // Enter fullscreen
+
         function enterFullscreen(element) {
-            if (element.requestFullscreen) {
-                element.requestFullscreen();
-            } else if (element.webkitRequestFullscreen) {
-                element.webkitRequestFullscreen();
-            } else if (element.mozRequestFullScreen) {
-                element.mozRequestFullScreen();
-            } else if (element.msRequestFullscreen) {
-                element.msRequestFullscreen();
-            }
+            element.requestFullscreen?.() ||
+            element.webkitRequestFullscreen?.() ||
+            element.mozRequestFullScreen?.() ||
+            element.msRequestFullscreen?.();
         }
-        
-        // Exit fullscreen
+
         function exitFullscreen() {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
-            } else if (document.mozCancelFullScreen) {
-                document.mozCancelFullScreen();
-            } else if (document.msExitFullscreen) {
-                document.msExitFullscreen();
-            }
+            document.exitFullscreen?.() ||
+            document.webkitExitFullscreen?.() ||
+            document.mozCancelFullScreen?.() ||
+            document.msExitFullscreen?.();
         }
-        
-        // Update fullscreen button icon/text
+
         function updateFullscreenButton() {
-            const fullscreenBtn = document.getElementById('fullscreen-btn');
-            if (!fullscreenBtn) return;
+            const btn = document.getElementById('fullscreen-btn');
+            if (!btn) return;
             
-            const isFullscreen = document.fullscreenElement || 
-                               document.webkitFullscreenElement || 
-                               document.mozFullScreenElement || 
-                               document.msFullscreenElement;
+            const isFS = document.fullscreenElement || document.webkitFullscreenElement || 
+                       document.mozFullScreenElement || document.msFullscreenElement;
             
-            if (isFullscreen) {
-                fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
-                fullscreenBtn.onclick = exitFullscreen;
-            } else {
-                fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
-                fullscreenBtn.onclick = toggleFullscreen;
-            }
+            btn.innerHTML = isFS 
+                ? '<i class="fas fa-compress"></i> Exit Fullscreen' 
+                : '<i class="fas fa-expand"></i> Fullscreen';
         }
-        
-        // Toggle mobile menu
+
         function toggleMenu() {
             const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('hidden');
-            
-            // Toggle body overflow
-            if (menu.classList.contains('hidden')) {
-                document.body.style.overflow = 'auto';
-            } else {
-                document.body.style.overflow = 'hidden';
-            }
+            const isOpen = menu.classList.toggle('hidden');
+            document.body.classList.toggle('menu-open', !isOpen);
+            document.body.style.overflow = isOpen ? 'auto' : 'hidden';
         }
     </script>
 </body>
