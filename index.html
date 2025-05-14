@@ -8,12 +8,23 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <style>
+        /* Added header scroll effects */
+        .header-hidden {
+            transform: translateY(-100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .header-visible {
+            transform: translateY(0);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
         .hover\:shadow-glow:hover {
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
         }
         body {
             background-color: #050505;
             color: white;
+            padding-top: 76px; /* Header offset */
         }
         .game-card {
             transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
@@ -115,8 +126,8 @@
     <link id="favicon" rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>">
 </head>
 <body class="min-h-screen flex flex-col font-sans">
-    <!-- Header -->
-    <header class="bg-dark py-4 border-b border-white/10 sticky top-0 z-50">
+    <!-- Header with scroll classes -->
+    <header id="main-header" class="bg-dark py-4 border-b border-white/10 sticky top-0 z-50 header-visible">
         <div class="container mx-auto px-4 flex justify-between items-center">
             <h1 id="site-title" class="text-2xl font-bold text-center flex-grow text-white">HiddenGames</h1>
             
@@ -246,119 +257,141 @@
     </footer>
 
     <script>
+        // Scroll detection for header
+        let lastScroll = 0;
+        const header = document.getElementById('main-header');
+        const scrollThreshold = 60;
+
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            
+            if (Math.abs(currentScroll - lastScroll) > scrollThreshold) {
+                if (currentScroll > lastScroll && currentScroll > 200) {
+                    header.classList.remove('header-visible');
+                    header.classList.add('header-hidden');
+                } else {
+                    header.classList.remove('header-hidden');
+                    header.classList.add('header-visible');
+                }
+                lastScroll = currentScroll;
+            }
+        });
+
+        // Modified gamesDB with unique filenames
         const gamesDB = {
             home: [
                 { 
                     name: "Slope", 
                     category: "Racing", 
                     thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Slope",
-                    filename: "games/slope.html" 
+                    filename: "slope_challenge.html" 
                 },
                 { 
                     name: "Minecraft Classic", 
                     category: "Adventure", 
                     thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Minecraft",
-                    filename: "games/minecraft.html"
+                    filename: "minecraft_classic.html"
                 },
                 { 
                     name: "Temple Run", 
                     category: "Action", 
                     thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Temple+Run",
-                    filename: "games/templerun.html"
+                    filename: "temple_run_adventure.html"
                 },
                 { 
                     name: "2048", 
                     category: "Puzzle", 
                     thumbnail: "https://via.placeholder.com/300x200/333/fff?text=2048",
-                    filename: "games/2048.html"
+                    filename: "number_puzzle_2048.html"
                 },
                 { 
                     name: "Among Us", 
                     category: "Multiplayer", 
                     thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Among+Us",
-                    filename: "games/amongus.html"
+                    filename: "among_us_social.html"
                 },
                 { 
                     name: "Cookie Clicker", 
                     category: "Idle", 
                     thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Cookie+Clicker",
-                    filename: "games/cookieclicker.html"
+                    filename: "cookie_clicker_idle.html"
                 },
                 { 
                     name: "Super Mario Bros", 
                     category: "Platformer", 
                     thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Mario",
-                    filename: "games/mario.html"
+                    filename: "super_mario_bros.html"
                 },
                 { 
                     name: "Basketball Stars", 
                     category: "Sports", 
                     thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Basketball",
-                    filename: "games/basketball.html"
+                    filename: "basketball_stars.html"
                 }
             ],
             racing: Array(16).fill().map((_, i) => ({ 
                 name: `Racing Game ${i+1}`, 
                 category: "Racing", 
                 thumbnail: `https://via.placeholder.com/300x200/333/fff?text=Racing+${i+1}`,
-                filename: `games/racing${i+1}.html`
+                filename: `racing_${['night','drag','urban','mountain','rally','drift','street','circuit','offroad','desert','speed','classic','future','retro','hyper','extreme'][i]}.html`
             })),
             puzzle: Array(16).fill().map((_, i) => ({ 
                 name: `Puzzle Game ${i+1}`, 
                 category: "Puzzle", 
                 thumbnail: `https://via.placeholder.com/300x200/333/fff?text=Puzzle+${i+1}`,
-                filename: `games/puzzle${i+1}.html`
+                filename: `puzzle_${['logic','numbers','words','patterns','shapes','colors','sequence','riddle','strategy','match3','sudoku','crossword','jigsaw','sliding','memory','physics'][i]}.html`
             })),
             platformer: Array(16).fill().map((_, i) => ({ 
                 name: `Platformer Game ${i+1}`, 
                 category: "Platformer", 
                 thumbnail: `https://via.placeholder.com/300x200/333/fff?text=Platformer+${i+1}`,
-                filename: `games/platformer${i+1}.html`
+                filename: `platformer_${['retro','fantasy','space','cyber','jungle','castle','future','steampunk','pirate','western','zombie','ninja','robot','magic','underground','sky'][i]}.html`
             })),
             action: Array(16).fill().map((_, i) => ({ 
                 name: `Action Game ${i+1}`, 
                 category: "Action", 
                 thumbnail: `https://via.placeholder.com/300x200/333/fff?text=Action+${i+1}`,
-                filename: `games/action${i+1}.html`
+                filename: `action_${['combat','shooter','brawler','stealth','survival','horror','warfare','superhero','espionage','martial','military','apocalypse','cyberpunk','dystopian','alien','roguelike'][i]}.html`
             })),
             adventure: Array(16).fill().map((_, i) => ({ 
                 name: `Adventure Game ${i+1}`, 
                 category: "Adventure", 
                 thumbnail: `https://via.placeholder.com/300x200/333/fff?text=Adventure+${i+1}`,
-                filename: `games/adventure${i+1}.html`
+                filename: `adventure_${['quest','fantasy','exploration','mystery','time','space','survival','puzzle','island','jungle','ocean','archeology','mythology','magic','dinosaur','robot'][i]}.html`
             })),
             strategy: Array(16).fill().map((_, i) => ({ 
                 name: `Strategy Game ${i+1}`, 
                 category: "Strategy", 
                 thumbnail: `https://via.placeholder.com/300x200/333/fff?text=Strategy+${i+1}`,
-                filename: `games/strategy${i+1}.html`
+                filename: `strategy_${['war','empire','economic','political','towerdefense','card','chess','tactical','historical','fantasy','sci-fi','business','city','diplomacy','resource','trade'][i]}.html`
             })),
             sports: Array(16).fill().map((_, i) => ({ 
                 name: `Sports Game ${i+1}`, 
                 category: "Sports", 
                 thumbnail: `https://via.placeholder.com/300x200/333/fff?text=Sports+${i+1}`,
-                filename: `games/sports${i+1}.html`
+                filename: `sports_${['soccer','basketball','tennis','golf','racing','extreme','winter','water','combat','olympic','extreme','fitness','team','individual','retro','future'][i]}.html`
             })),
             shooting: Array(16).fill().map((_, i) => ({ 
                 name: `Shooting Game ${i+1}`, 
                 category: "Shooting", 
                 thumbnail: `https://via.placeholder.com/300x200/333/fff?text=Shooting+${i+1}`,
-                filename: `games/shooting${i+1}.html`
+                filename: `shooting_${['fps','tps','sniper','arena','war','zombie','space','stealth','horror','retro','cyberpunk','western','military','survival','roguelike','battle'][i]}.html`
             })),
             multiplayer: Array(16).fill().map((_, i) => ({ 
                 name: `Multiplayer Game ${i+1}`, 
                 category: "Multiplayer", 
                 thumbnail: `https://via.placeholder.com/300x200/333/fff?text=Multiplayer+${i+1}`,
-                filename: `games/multiplayer${i+1}.html`
+                filename: `multiplayer_${['battle','coop','party','racing','shooter','sports','strategy','puzzle','survival','arena','board','card','roleplay','sandbox','creative','social'][i]}.html`
             })),
             idle: Array(16).fill().map((_, i) => ({ 
                 name: `Idle Game ${i+1}`, 
                 category: "Idle", 
                 thumbnail: `https://via.placeholder.com/300x200/333/fff?text=Idle+${i+1}`,
-                filename: `games/idle${i+1}.html`
+                filename: `idle_${['clicker','factory','mining','space','fantasy','business','magic','technology','farming','evolution','stock','universe','incremental','merchant','alchemy','civilization'][i]}.html`
             }))
         };
 
+        // Original JavaScript functionality remains unchanged below
         let currentCategory = 'home';
         let searchQuery = '';
         let isFullscreen = false;
