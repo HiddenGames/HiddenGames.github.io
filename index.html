@@ -464,6 +464,12 @@
             grid.className = 'flex flex-wrap justify-center gap-4 w-full px-4';
             container.appendChild(grid);
             results.forEach(game => grid.appendChild(createGameCard(game)));
+
+            // Automatically close mobile menu if open
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (!mobileMenu.classList.contains('hidden')) {
+                toggleMenu();
+            }
         }
 
         function openGameModal(game) {
