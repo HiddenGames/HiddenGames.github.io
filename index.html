@@ -6,162 +6,154 @@
     <title>HiddenGames</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        dark: '#0a0a0a',
-                        darker: '#050505',
-                    },
-                }
-            }
+    <style>
+        .hover\:shadow-glow:hover {
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
         }
-    </script>
-    <script>
-        // Change favicon dynamically
-        function changeFavicon(icon) {
-            const favicon = document.getElementById('favicon');
-            switch(icon) {
-                case 'drive':
-                    favicon.href = 'https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png';
-                    break;
-                case 'google':
-                    favicon.href = 'https://www.google.com/favicon.ico';
-                    break;
-                case 'powerschool':
-                    favicon.href = 'https://www.powerschool.com/favicon.ico';
-                    break;
-                case 'classroom':
-                    favicon.href = 'https://ssl.gstatic.com/classroom/favicon.png';
-                    break;
-                default:
-                    favicon.href = 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>';
-            }
+        body {
+            background-color: #050505;
+            color: white;
         }
+        .game-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+        #game-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        #game-modal {
+            transition: opacity 0.3s ease;
+        }
+        /* Fullscreen styles */
+        :fullscreen #game-frame-container {
+            background: black;
+        }
+        :-webkit-full-screen #game-frame-container {
+            background: black;
+        }
+        :-moz-full-screen #game-frame-container {
+            background: black;
+        }
+        :-ms-fullscreen #game-frame-container {
+            background: black;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans">
+    <!-- Header -->
+    <header class="bg-dark py-4 border-b border-white/10 sticky top-0 z-50">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-center flex-grow text-white">HiddenGames</h1>
+        </div>
+    </header>
+    
+    <!-- Main content -->
+    <main class="flex-grow container mx-auto px-0 py-8">
+        <h2 id="page-title" class="text-2xl font-bold text-white mb-8 text-center">Popular Games</h2>
         
-        // Games database
-        const gamesDB = {
-            home: [
-                { name: "Slope", category: "Racing", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Slope" },
-                { name: "Minecraft Classic", category: "Adventure", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Minecraft" },
-                { name: "Temple Run", category: "Action", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Temple+Run" },
-                { name: "2048", category: "Puzzle", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=2048" },
-                { name: "Among Us", category: "Multiplayer", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Among+Us" },
-                { name: "Cookie Clicker", category: "Idle", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Cookie+Clicker" },
-                { name: "Super Mario Bros", category: "Platformer", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Mario" },
-                { name: "Basketball Stars", category: "Sports", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Basketball" }
-            ],
-            racing: Array(52).fill().map((_, i) => ({ 
-                name: `Racing Game ${i+1}`, 
+        <div id="games-container" class="flex flex-wrap justify-center gap-4 w-full px-4">
+            <!-- Games will be loaded here -->
+        </div>
+    </main>
+    
+    <!-- Game modal -->
+    <div id="game-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div id="modal-content" class="bg-dark rounded-xl w-full max-w-4xl max-h-[90vh] overflow-hidden border border-white/10 shadow-xl">
+            <div class="w-full h-full flex flex-col">
+                <div class="p-3 bg-gray-900 rounded-t-lg flex justify-between items-center">
+                    <h3 id="modal-title" class="text-white font-medium"></h3>
+                    <div class="flex gap-2">
+                        <button id="fullscreen-btn" onclick="toggleFullscreen()" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">
+                            <i class="fas fa-expand"></i> Fullscreen
+                        </button>
+                        <button onclick="closeModal()" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">
+                            <i class="fas fa-times"></i> Close
+                        </button>
+                    </div>
+                </div>
+                <div id="game-frame-container" class="flex-1 bg-black">
+                    <!-- Game will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Games database with 8 popular games
+        const gamesDB = [
+            { 
+                name: "Slope", 
                 category: "Racing", 
-                thumbnail: `https://via.placeholder.com/300x200/333/fff?text=Racing+${i+1}` 
-            })),
-            puzzle: Array(52).fill().map((_, i) => ({ 
-                name: `Puzzle Game ${i+1}`, 
-                category: "Puzzle", 
-                thumbnail: `https://via.placeholder.com/300x200/333/fff?text=Puzzle+${i+1}` 
-            })),
-            platformer: Array(52).fill().map((_, i) => ({ 
-                name: `Platformer Game ${i+1}`, 
-                category: "Platformer", 
-                thumbnail: `https://via.placeholder.com/300x200/333/fff?text=Platformer+${i+1}` 
-            })),
-            action: Array(52).fill().map((_, i) => ({ 
-                name: `Action Game ${i+1}`, 
-                category: "Action", 
-                thumbnail: `https://via.placeholder.com/300x200/333/fff?text=Action+${i+1}` 
-            })),
-            adventure: Array(52).fill().map((_, i) => ({ 
-                name: `Adventure Game ${i+1}`, 
+                thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Slope",
+                filename: "games/slope.html" 
+            },
+            { 
+                name: "Minecraft Classic", 
                 category: "Adventure", 
-                thumbnail: `https://via.placeholder.com/300x200/333/fff?text=Adventure+${i+1}` 
-            })),
-            strategy: Array(52).fill().map((_, i) => ({ 
-                name: `Strategy Game ${i+1}`, 
-                category: "Strategy", 
-                thumbnail: `https://via.placeholder.com/300x200/333/fff?text=Strategy+${i+1}` 
-            })),
-            sports: Array(52).fill().map((_, i) => ({ 
-                name: `Sports Game ${i+1}`, 
-                category: "Sports", 
-                thumbnail: `https://via.placeholder.com/300x200/333/fff?text=Sports+${i+1}` 
-            })),
-            shooting: Array(52).fill().map((_, i) => ({ 
-                name: `Shooting Game ${i+1}`, 
-                category: "Shooting", 
-                thumbnail: `https://via.placeholder.com/300x200/333/fff?text=Shooting+${i+1}` 
-            })),
-            multiplayer: Array(52).fill().map((_, i) => ({ 
-                name: `Multiplayer Game ${i+1}`, 
+                thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Minecraft",
+                filename: "games/minecraft.html"
+            },
+            { 
+                name: "Temple Run", 
+                category: "Action", 
+                thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Temple+Run",
+                filename: "games/templerun.html"
+            },
+            { 
+                name: "2048", 
+                category: "Puzzle", 
+                thumbnail: "https://via.placeholder.com/300x200/333/fff?text=2048",
+                filename: "games/2048.html"
+            },
+            { 
+                name: "Among Us", 
                 category: "Multiplayer", 
-                thumbnail: `https://via.placeholder.com/300x200/333/fff?text=Multiplayer+${i+1}` 
-            })),
-            idle: Array(52).fill().map((_, i) => ({ 
-                name: `Idle Game ${i+1}`, 
+                thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Among+Us",
+                filename: "games/amongus.html"
+            },
+            { 
+                name: "Cookie Clicker", 
                 category: "Idle", 
-                thumbnail: `https://via.placeholder.com/300x200/333/fff?text=Idle+${i+1}` 
-            }))
-        };
-        
-        // Current state
-        let currentCategory = 'home';
-        let searchQuery = '';
+                thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Cookie+Clicker",
+                filename: "games/cookieclicker.html"
+            },
+            { 
+                name: "Super Mario Bros", 
+                category: "Platformer", 
+                thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Mario",
+                filename: "games/mario.html"
+            },
+            { 
+                name: "Basketball Stars", 
+                category: "Sports", 
+                thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Basketball",
+                filename: "games/basketball.html"
+            }
+        ];
         
         // Initialize page
         document.addEventListener('DOMContentLoaded', () => {
-            renderGames('home');
-            changeFavicon('default');
+            renderGames();
             
-            // Search input event listener
-            document.getElementById('search-input').addEventListener('keyup', (e) => {
-                if (e.key === 'Enter') {
-                    searchGames();
-                }
-            });
-            
-            // Desktop search input event listener
-            document.getElementById('search-input-desktop').addEventListener('keyup', (e) => {
-                if (e.key === 'Enter') {
-                    searchGames();
-                }
-            });
+            // Listen for fullscreen changes
+            document.addEventListener('fullscreenchange', updateFullscreenButton);
+            document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
+            document.addEventListener('mozfullscreenchange', updateFullscreenButton);
+            document.addEventListener('MSFullscreenChange', updateFullscreenButton);
         });
         
         // Render games grid
-        function renderGames(category) {
-            currentCategory = category;
-            searchQuery = '';
-            document.getElementById('search-input').value = '';
-            document.getElementById('search-input-desktop').value = '';
-            
+        function renderGames() {
             const container = document.getElementById('games-container');
             container.innerHTML = '';
-            
-            const games = gamesDB[category];
-            const title = document.getElementById('page-title');
-            
-            if (category === 'home') {
-                title.textContent = 'Popular Games';
-            } else {
-                title.textContent = `${category.charAt(0).toUpperCase() + category.slice(1)} Games`;
-            }
-            
-            if (!games || games.length === 0) {
-                container.innerHTML = '<p class="text-white/70 text-center col-span-4 py-12">No games found</p>';
-                return;
-            }
             
             // Create a grid container for the games
             const grid = document.createElement('div');
             grid.className = 'flex flex-wrap justify-center gap-4 w-full px-4';
             container.appendChild(grid);
             
-            games.forEach((game) => {
+            gamesDB.forEach((game) => {
                 const gameCard = createGameCard(game);
                 grid.appendChild(gameCard);
             });
@@ -203,331 +195,122 @@
             card.appendChild(category);
             card.appendChild(playBtn);
             
-            card.onclick = () => openGameModal(game);
-            
             return card;
-        }
-        
-        // Search games
-        function searchGames() {
-            const query = document.getElementById('search-input').value.toLowerCase().trim() || 
-                          document.getElementById('search-input-desktop').value.toLowerCase().trim();
-            searchQuery = query;
-            
-            const container = document.getElementById('games-container');
-            container.innerHTML = '';
-            
-            if (!query) {
-                renderGames(currentCategory);
-                return;
-            }
-            
-            const title = document.getElementById('page-title');
-            title.textContent = `Search Results for "${query}"`;
-            
-            // Search only in the home category games for exact matches
-            const homeGames = gamesDB['home'];
-            const results = homeGames.filter(game => 
-                game.name.toLowerCase().includes(query)
-            );
-            
-            if (results.length === 0) {
-                container.innerHTML = '<p class="text-white/70 text-center col-span-4 py-12">No games found matching "' + query + '"</p>';
-                return;
-            }
-            
-            // Create a grid container for search results
-            const grid = document.createElement('div');
-            grid.className = 'flex flex-wrap justify-center gap-4 w-full px-4';
-            container.appendChild(grid);
-            
-            results.forEach((game) => {
-                const gameCard = createGameCard(game);
-                grid.appendChild(gameCard);
-            });
         }
         
         // Open game modal
         function openGameModal(game) {
             const modal = document.getElementById('game-modal');
-            const modalContent = document.getElementById('modal-content');
             const modalTitle = document.getElementById('modal-title');
+            const gameContainer = document.getElementById('game-frame-container');
             
             modalTitle.textContent = game.name;
-            modalContent.innerHTML = `
-                <div class="w-full h-full bg-black rounded-lg flex flex-col">
-                    <div class="flex-1 flex items-center justify-center bg-gray-900 rounded-t-lg">
-                        <div class="text-center p-6">
-                            <p class="text-white/70 mb-4">Paste your HTML game code below to play ${game.name}</p>
-                            <textarea id="game-code-input" class="w-full h-32 bg-gray-800 text-white p-3 rounded-lg font-mono text-sm" placeholder="Paste HTML game code here..."></textarea>
-                        </div>
-                    </div>
-                    <div class="p-4 bg-gray-800 rounded-b-lg flex justify-between items-center">
-                        <div class="text-white/50 text-sm">${game.category} Game</div>
-                        <div class="flex gap-2">
-                            <button onclick="runGame()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition">Run Game</button>
-                            <button onclick="closeModal()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm font-medium transition">Close</button>
-                        </div>
+            
+            // Clear previous content
+            gameContainer.innerHTML = `
+                <div class="w-full h-full flex items-center justify-center">
+                    <div class="text-center">
+                        <i class="fas fa-spinner fa-spin text-4xl mb-4 text-white"></i>
+                        <p class="text-white">Loading ${game.name}...</p>
                     </div>
                 </div>
             `;
             
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
-        }
-        
-        // Run game from pasted code
-        function runGame() {
-            const code = document.getElementById('game-code-input').value.trim();
-            if (!code) return;
             
-            const modalContent = document.getElementById('modal-content');
-            modalContent.innerHTML = `
-                <div class="w-full h-full bg-black rounded-lg flex flex-col">
-                    <div class="p-3 bg-gray-900 rounded-t-lg flex justify-between items-center">
-                        <h3 class="text-white font-medium" id="modal-title"></h3>
-                        <div class="flex gap-2">
-                            <button onclick="enterFullscreen()" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs font-medium transition">
-                                <i class="fas fa-expand mr-1"></i> Fullscreen
-                            </button>
-                            <button onclick="closeModal()" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs font-medium transition">
-                                <i class="fas fa-times mr-1"></i> Close
-                            </button>
-                        </div>
-                    </div>
-                    <div class="flex-1 overflow-auto">
-                        <iframe id="game-frame" class="w-full h-full" sandbox="allow-scripts allow-same-origin"></iframe>
-                    </div>
-                </div>
-            `;
-            
-            // Set the game title again since we replaced the content
-            document.getElementById('modal-title').textContent = document.getElementById('modal-title').textContent;
-            
-            // Load the game code into the iframe
-            const frame = document.getElementById('game-frame');
-            frame.srcdoc = code;
+            // Create iframe to load the game
+            setTimeout(() => {
+                gameContainer.innerHTML = `
+                    <iframe 
+                        id="game-frame" 
+                        src="${game.filename}" 
+                        class="w-full h-full" 
+                        sandbox="allow-scripts allow-same-origin"
+                    ></iframe>
+                `;
+                
+                // Update fullscreen button state
+                updateFullscreenButton();
+            }, 500);
         }
         
         // Close modal
         function closeModal() {
-            document.getElementById('game-modal').classList.add('hidden');
+            // Exit fullscreen first if active
+            if (document.fullscreenElement || 
+                document.webkitFullscreenElement || 
+                document.mozFullScreenElement || 
+                document.msFullscreenElement) {
+                exitFullscreen();
+            }
+            
+            const modal = document.getElementById('game-modal');
+            const gameContainer = document.getElementById('game-frame-container');
+            
+            // Clear the iframe
+            gameContainer.innerHTML = '';
+            
+            modal.classList.add('hidden');
             document.body.style.overflow = 'auto';
         }
         
+        // Toggle fullscreen
+        function toggleFullscreen() {
+            const container = document.getElementById('game-frame-container');
+            
+            if (!document.fullscreenElement && 
+                !document.webkitFullscreenElement && 
+                !document.mozFullScreenElement && 
+                !document.msFullscreenElement) {
+                enterFullscreen(container);
+            } else {
+                exitFullscreen();
+            }
+        }
+        
         // Enter fullscreen
-        function enterFullscreen() {
-            const element = document.getElementById('game-frame').parentElement;
+        function enterFullscreen(element) {
             if (element.requestFullscreen) {
                 element.requestFullscreen();
             } else if (element.webkitRequestFullscreen) {
                 element.webkitRequestFullscreen();
+            } else if (element.mozRequestFullScreen) {
+                element.mozRequestFullScreen();
             } else if (element.msRequestFullscreen) {
                 element.msRequestFullscreen();
             }
         }
         
-        // Toggle mobile menu
-        function toggleMenu() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('hidden');
+        // Exit fullscreen
+        function exitFullscreen() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        }
+        
+        // Update fullscreen button icon/text
+        function updateFullscreenButton() {
+            const fullscreenBtn = document.getElementById('fullscreen-btn');
+            if (!fullscreenBtn) return;
             
-            // Toggle body overflow
-            if (menu.classList.contains('hidden')) {
-                document.body.style.overflow = 'auto';
+            const isFullscreen = document.fullscreenElement || 
+                               document.webkitFullscreenElement || 
+                               document.mozFullScreenElement || 
+                               document.msFullscreenElement;
+            
+            if (isFullscreen) {
+                fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
             } else {
-                document.body.style.overflow = 'hidden';
+                fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
             }
         }
     </script>
-    <style>
-        .hover\:shadow-glow:hover {
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-        }
-        body {
-            background-color: #050505;
-            color: white;
-        }
-        .game-card {
-            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-        }
-        #mobile-menu {
-            transition: transform 0.3s ease, opacity 0.3s ease;
-        }
-        #game-modal {
-            transition: opacity 0.3s ease;
-        }
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #111;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #333;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #444;
-        }
-        
-        @media (max-width: 1024px) {
-            .game-card {
-                width: calc(33.333% - 1rem) !important;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .game-card {
-                width: calc(50% - 1rem) !important;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .game-card {
-                width: 100% !important;
-                max-width: 100% !important;
-            }
-        }
-    </style>
-    <link id="favicon" rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>">
-</head>
-<body class="min-h-screen flex flex-col font-sans">
-    <!-- Header -->
-    <header class="bg-dark py-4 border-b border-white/10 sticky top-0 z-50">
-        <div class="container mx-auto px-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-center flex-grow text-white">HiddenGames</h1>
-            
-            <!-- Desktop nav -->
-            <div class="hidden md:flex items-center gap-4">
-                <div class="relative">
-                    <input type="text" id="search-input-desktop" placeholder="Search games..." 
-                           class="bg-darker text-white px-4 py-2 rounded-full border border-white/10 focus:outline-none focus:ring-1 focus:ring-white/30 text-sm w-64">
-                    <button onclick="searchGames()" class="absolute right-3 top-2 text-white/50 hover:text-white">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-                
-                <button onclick="toggleMenu()" class="text-white hover:text-white/80">
-                    <i class="fas fa-bars text-xl"></i>
-                </button>
-            </div>
-            
-            <!-- Mobile menu button -->
-            <button onclick="toggleMenu()" class="md:hidden text-white hover:text-white/80">
-                <i class="fas fa-bars text-xl"></i>
-            </button>
-        </div>
-    </header>
-    
-    <!-- Mobile menu -->
-    <div id="mobile-menu" class="hidden fixed inset-0 bg-dark/95 backdrop-blur-sm z-40 p-6 overflow-y-auto">
-        <div class="flex justify-between items-center mb-8">
-            <h2 class="text-xl font-bold text-white">Menu</h2>
-            <button onclick="toggleMenu()" class="text-white text-2xl hover:text-white/70">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        
-        <div class="mb-6">
-            <div class="relative">
-                <input type="text" id="search-input" placeholder="Search games..." 
-                       class="w-full bg-darker text-white px-4 py-3 rounded-lg border border-white/10 focus:outline-none focus:ring-1 focus:ring-white/30">
-                <button onclick="searchGames(); toggleMenu();" class="absolute right-3 top-3 text-white/50 hover:text-white">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
-        </div>
-        
-        <nav class="space-y-2 mb-8">
-            <button onclick="renderGames('home'); toggleMenu();" class="block w-full text-left text-white py-3 px-4 rounded-lg hover:bg-white/5 transition flex items-center gap-3">
-                <i class="fas fa-home w-5 text-center"></i> Home
-            </button>
-            
-            <h3 class="text-white/70 text-sm mt-6 mb-3 px-4 uppercase tracking-wider">Categories</h3>
-            
-            <button onclick="renderGames('racing'); toggleMenu();" class="block w-full text-left text-white py-3 px-4 rounded-lg hover:bg-white/5 transition flex items-center gap-3">
-                <i class="fas fa-car w-5 text-center"></i> Racing Games
-            </button>
-            
-            <button onclick="renderGames('puzzle'); toggleMenu();" class="block w-full text-left text-white py-3 px-4 rounded-lg hover:bg-white/5 transition flex items-center gap-3">
-                <i class="fas fa-puzzle-piece w-5 text-center"></i> Puzzle Games
-            </button>
-            
-            <button onclick="renderGames('platformer'); toggleMenu();" class="block w-full text-left text-white py-3 px-4 rounded-lg hover:bg-white/5 transition flex items-center gap-3">
-                <i class="fas fa-running w-5 text-center"></i> Platformer Games
-            </button>
-            
-            <button onclick="renderGames('action'); toggleMenu();" class="block w-full text-left text-white py-3 px-4 rounded-lg hover:bg-white/5 transition flex items-center gap-3">
-                <i class="fas fa-fist-raised w-5 text-center"></i> Action Games
-            </button>
-            
-            <button onclick="renderGames('adventure'); toggleMenu();" class="block w-full text-left text-white py-3 px-4 rounded-lg hover:bg-white/5 transition flex items-center gap-3">
-                <i class="fas fa-mountain w-5 text-center"></i> Adventure Games
-            </button>
-            
-            <button onclick="renderGames('strategy'); toggleMenu();" class="block w-full text-left text-white py-3 px-4 rounded-lg hover:bg-white/5 transition flex items-center gap-3">
-                <i class="fas fa-chess w-5 text-center"></i> Strategy Games
-            </button>
-            
-            <button onclick="renderGames('sports'); toggleMenu();" class="block w-full text-left text-white py-3 px-4 rounded-lg hover:bg-white/5 transition flex items-center gap-3">
-                <i class="fas fa-basketball-ball w-5 text-center"></i> Sports Games
-            </button>
-            
-            <button onclick="renderGames('shooting'); toggleMenu();" class="block w-full text-left text-white py-3 px-4 rounded-lg hover:bg-white/5 transition flex items-center gap-3">
-                <i class="fas fa-crosshairs w-5 text-center"></i> Shooting Games
-            </button>
-            
-            <button onclick="renderGames('multiplayer'); toggleMenu();" class="block w-full text-left text-white py-3 px-4 rounded-lg hover:bg-white/5 transition flex items-center gap-3">
-                <i class="fas fa-users w-5 text-center"></i> Multiplayer Games
-            </button>
-            
-            <button onclick="renderGames('idle'); toggleMenu();" class="block w-full text-left text-white py-3 px-4 rounded-lg hover:bg-white/5 transition flex items-center gap-3">
-                <i class="fas fa-mouse-pointer w-5 text-center"></i> Idle & Clicker
-            </button>
-        </nav>
-        
-        <div class="pt-4 border-t border-white/10">
-            <h3 class="text-white/70 text-sm mb-3 px-4 uppercase tracking-wider">Quick Links</h3>
-            <div class="flex flex-wrap gap-2 px-4">
-                <button onclick="changeFavicon('drive')" class="px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-full text-white text-sm flex items-center gap-1.5 transition">
-                    <i class="fab fa-google-drive"></i> Drive
-                </button>
-                <button onclick="changeFavicon('google')" class="px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-full text-white text-sm flex items-center gap-1.5 transition">
-                    <i class="fab fa-google"></i> Google
-                </button>
-                <button onclick="changeFavicon('powerschool')" class="px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-full text-white text-sm flex items-center gap-1.5 transition">
-                    <i class="fas fa-graduation-cap"></i> Powerschool
-                </button>
-                <button onclick="changeFavicon('classroom')" class="px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-full text-white text-sm flex items-center gap-1.5 transition">
-                    <i class="fas fa-chalkboard-teacher"></i> Classroom
-                </button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Main content -->
-    <main class="flex-grow container mx-auto px-0 py-8">
-        <h2 id="page-title" class="text-2xl font-bold text-white mb-8 text-center">Popular Games</h2>
-        
-        <div id="games-container" class="flex flex-wrap justify-center gap-4 w-full px-4">
-            <!-- Games will be loaded here -->
-        </div>
-    </main>
-    
-    <!-- Game modal -->
-    <div id="game-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div id="modal-content" class="bg-dark rounded-xl w-full max-w-4xl max-h-[90vh] overflow-hidden border border-white/10 shadow-xl">
-            <!-- Game content will be loaded here -->
-        </div>
-    </div>
-    
-    <!-- Footer -->
-    <footer class="bg-dark py-6 border-t border-white/10">
-        <div class="container mx-auto px-4 text-center text-white/50 text-sm">
-            <p>©2025 HiddenGames - Unblocked Games</p>
-        </div>
-    </footer>
 </body>
 </html>
