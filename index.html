@@ -266,7 +266,7 @@
             const currentScroll = window.pageYOffset;
             
             if (Math.abs(currentScroll - lastScroll) > scrollThreshold) {
-                if (currentScroll > lastScroll && currentScroll > 0) {
+                if (currentScroll > lastScroll && currentScroll > 70) {
                     header.classList.remove('header-visible');
                     header.classList.add('header-hidden');
                 } else {
