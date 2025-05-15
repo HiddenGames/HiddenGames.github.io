@@ -107,8 +107,41 @@
         #mobile-menu {
             z-index: 1000;
         }
+        .favicon-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .favicon-option:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .favicon-option img {
+            width: 16px;
+            height: 16px;
+        }
+        .favicon-selector {
+            position: relative;
+        }
+        .favicon-dropdown {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 8px;
+            min-width: 180px;
+            z-index: 1001;
+            display: none;
+        }
+        .favicon-selector:hover .favicon-dropdown {
+            display: block;
+        }
     </style>
-    <link rel="icon" href="/assests/default_favicon.png" type="image/png">
+    <link rel="icon" href="/assests/default_favicon.png" type="image/png" id="favicon">
 </head>
 <body class="min-h-screen flex flex-col font-sans">
     <header id="main-header" class="bg-dark py-4 border-b border-white/10 sticky top-0 z-50 header-visible">
@@ -183,6 +216,35 @@
             <button onclick="renderGames('idle'); toggleMenu();" class="block w-full text-left text-white py-3 px-4 rounded-lg hover:bg-white/5 transition flex items-center gap-3">
                 <i class="fas fa-mouse-pointer w-5 text-center"></i> Idle & Clicker
             </button>
+            
+            <h3 class="text-white/70 text-sm mt-6 mb-3 px-4 uppercase tracking-wider">Appearance</h3>
+            <div class="favicon-selector">
+                <button class="block w-full text-left text-white py-3 px-4 rounded-lg hover:bg-white/5 transition flex items-center gap-3">
+                    <i class="fas fa-image w-5 text-center"></i> Change Favicon
+                </button>
+                <div class="favicon-dropdown">
+                    <div class="favicon-option" onclick="changeFavicon('default', 'HiddenGames')">
+                        <img src="/assests/default_favicon.png" alt="Default">
+                        <span>Default</span>
+                    </div>
+                    <div class="favicon-option" onclick="changeFavicon('https://www.google.com/favicon.ico', 'Google')">
+                        <img src="https://www.google.com/favicon.ico" alt="Google">
+                        <span>Google</span>
+                    </div>
+                    <div class="favicon-option" onclick="changeFavicon('https://powerschool.com/favicon.ico', 'PowerSchool')">
+                        <img src="https://powerschool.com/favicon.ico" alt="PowerSchool">
+                        <span>PowerSchool</span>
+                    </div>
+                    <div class="favicon-option" onclick="changeFavicon('https://classroom.google.com/favicon.ico', 'Google Classroom')">
+                        <img src="https://classroom.google.com/favicon.ico" alt="Google Classroom">
+                        <span>Google Classroom</span>
+                    </div>
+                    <div class="favicon-option" onclick="changeFavicon('https://www.youtube.com/favicon.ico', 'YouTube')">
+                        <img src="https://www.youtube.com/favicon.ico" alt="YouTube">
+                        <span>YouTube</span>
+                    </div>
+                </div>
+            </div>
         </nav>
     </div>
 
@@ -248,38 +310,195 @@
         // Full Game Database with 16 Games per Category
         const gamesDB = {
             home: [
-                { name: "Slope", category: "Racing (Click fullscreen before game loads)", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Slope", filename: "/games/slope.html" },
-                { name: "Minecraft Classic", category: "Adventure", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Minecraft", filename: "/games/minecraft.html" },
-                { name: "Temple Run", category: "Action", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Temple+Run", filename: "templerun.html" },
-                { name: "Eggy Car", category: "Racing (Temporarily Down)", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Eggy+Car", filename: "/games/eggycar.html" },
-                { name: "Among Us", category: "Multiplayer", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Among+Us", filename: "amongus.html" },
-                { name: "Cookie Clicker", category: "Idle", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Cookie+Clicker", filename: "cookieclicker.html" },
-                { name: "Super Mario Bros", category: "Platformer", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Mario", filename: "mario.html" },
-                { name: "Basketball Stars", category: "Sports", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Basketball", filename: "basketball.html" }
+                { name: "Slope", category: "Action", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Slope", filename: "/games/slope.html", tags: ["action", "popular"] },
+                { name: "Minecraft Classic", category: "Adventure", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Minecraft", filename: "/games/minecraft.html", tags: ["adventure", "popular"] },
+                { name: "Temple Run", category: "Action", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Temple+Run", filename: "templerun.html", tags: ["action", "popular"] },
+                { name: "Eggy Car", category: "Racing", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Eggy+Car", filename: "/games/eggycar.html", tags: ["racing", "popular"] },
+                { name: "Among Us", category: "Multiplayer", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Among+Us", filename: "amongus.html", tags: ["multiplayer", "popular"] },
+                { name: "Cookie Clicker", category: "Idle", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Cookie+Clicker", filename: "cookieclicker.html", tags: ["idle", "popular"] },
+                { name: "Super Mario Bros", category: "Platformer", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Mario", filename: "mario.html", tags: ["platformer", "popular"] },
+                { name: "Basketball Stars", category: "Sports", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Basketball", filename: "basketball.html", tags: ["sports", "popular"] }
             ],
             racing: [
-                { name: "Speed Racer", category: "Racing", filename: "race1.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+1" },
-                { name: "Mountain Drift", category: "Racing", filename: "race2.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+2" },
-                { name: "Urban Challenge", category: "Racing", filename: "race3.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+3" },
-                { name: "Desert Rally", category: "Racing", filename: "race4.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+4" },
-                { name: "Night Rider", category: "Racing", filename: "race5.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+5" },
-                { name: "F1 Champions", category: "Racing", filename: "race6.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+6" },
-                { name: "Drag Race Pro", category: "Racing", filename: "race7.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+7" },
-                { name: "Offroad Madness", category: "Racing", filename: "race8.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+8" },
-                { name: "Circuit Master", category: "Racing", filename: "race9.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+9" },
-                { name: "Hyper Speed", category: "Racing", filename: "race10.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+10" },
-                { name: "Retro Racer", category: "Racing", filename: "race11.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+11" },
-                { name: "Future Drive", category: "Racing", filename: "race12.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+12" },
-                { name: "Snow Drift", category: "Racing", filename: "race13.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+13" },
-                { name: "City Chase", category: "Racing", filename: "race14.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+14" },
-                { name: "Motor Mayhem", category: "Racing", filename: "race15.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+15" },
-                { name: "Extreme Speed", category: "Racing", filename: "race16.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+16" }
+                { name: "Speed Racer", category: "Racing", filename: "race1.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+1", tags: ["racing"] },
+                { name: "Mountain Drift", category: "Racing", filename: "race2.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+2", tags: ["racing"] },
+                { name: "Urban Challenge", category: "Racing", filename: "race3.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+3", tags: ["racing"] },
+                { name: "Desert Rally", category: "Racing", filename: "race4.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+4", tags: ["racing"] },
+                { name: "Night Rider", category: "Racing", filename: "race5.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+5", tags: ["racing"] },
+                { name: "F1 Champions", category: "Racing", filename: "race6.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+6", tags: ["racing"] },
+                { name: "Drag Race Pro", category: "Racing", filename: "race7.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+7", tags: ["racing"] },
+                { name: "Offroad Madness", category: "Racing", filename: "race8.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+8", tags: ["racing"] },
+                { name: "Circuit Master", category: "Racing", filename: "race9.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+9", tags: ["racing"] },
+                { name: "Hyper Speed", category: "Racing", filename: "race10.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+10", tags: ["racing"] },
+                { name: "Retro Racer", category: "Racing", filename: "race11.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+11", tags: ["racing"] },
+                { name: "Future Drive", category: "Racing", filename: "race12.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+12", tags: ["racing"] },
+                { name: "Snow Drift", category: "Racing", filename: "race13.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+13", tags: ["racing"] },
+                { name: "City Chase", category: "Racing", filename: "race14.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+14", tags: ["racing"] },
+                { name: "Motor Mayhem", category: "Racing", filename: "race15.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+15", tags: ["racing"] },
+                { name: "Extreme Speed", category: "Racing", filename: "race16.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Race+16", tags: ["racing"] }
             ],
             puzzle: [
-                { name: "Brain Teaser 1", category: "Puzzle", filename: "puzzle1.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Puzzle+1" },
-                // Continue adding 15 more puzzle games...
+                { name: "Brain Teaser 1", category: "Puzzle", filename: "puzzle1.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Puzzle+1", tags: ["puzzle"] },
+                { name: "Sudoku Master", category: "Puzzle", filename: "puzzle2.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Puzzle+2", tags: ["puzzle"] },
+                { name: "Crossword Pro", category: "Puzzle", filename: "puzzle3.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Puzzle+3", tags: ["puzzle"] },
+                { name: "Match Three", category: "Puzzle", filename: "puzzle4.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Puzzle+4", tags: ["puzzle"] },
+                { name: "Jigsaw Puzzle", category: "Puzzle", filename: "puzzle5.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Puzzle+5", tags: ["puzzle"] },
+                { name: "Word Search", category: "Puzzle", filename: "puzzle6.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Puzzle+6", tags: ["puzzle"] },
+                { name: "Memory Game", category: "Puzzle", filename: "puzzle7.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Puzzle+7", tags: ["puzzle"] },
+                { name: "Logic Grid", category: "Puzzle", filename: "puzzle8.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Puzzle+8", tags: ["puzzle"] },
+                { name: "Block Puzzle", category: "Puzzle", filename: "puzzle9.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Puzzle+9", tags: ["puzzle"] },
+                { name: "Pipe Connect", category: "Puzzle", filename: "puzzle10.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Puzzle+10", tags: ["puzzle"] },
+                { name: "2048", category: "Puzzle", filename: "puzzle11.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Puzzle+11", tags: ["puzzle"] },
+                { name: "Tetris", category: "Puzzle", filename: "puzzle12.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Puzzle+12", tags: ["puzzle"] },
+                { name: "Mahjong", category: "Puzzle", filename: "puzzle13.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Puzzle+13", tags: ["puzzle"] },
+                { name: "Solitaire", category: "Puzzle", filename: "puzzle14.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Puzzle+14", tags: ["puzzle"] },
+                { name: "Chess", category: "Puzzle", filename: "puzzle15.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Puzzle+15", tags: ["puzzle"] },
+                { name: "Checkers", category: "Puzzle", filename: "puzzle16.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Puzzle+16", tags: ["puzzle"] }
             ],
-            // Add other categories following the same pattern
+            platformer: [
+                { name: "Platform Jumper", category: "Platformer", filename: "platform1.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Platform+1", tags: ["platformer"] },
+                { name: "Super Jump", category: "Platformer", filename: "platform2.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Platform+2", tags: ["platformer"] },
+                { name: "Cave Explorer", category: "Platformer", filename: "platform3.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Platform+3", tags: ["platformer"] },
+                { name: "Pixel Adventure", category: "Platformer", filename: "platform4.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Platform+4", tags: ["platformer"] },
+                { name: "Ninja Run", category: "Platformer", filename: "platform5.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Platform+5", tags: ["platformer"] },
+                { name: "Space Jumper", category: "Platformer", filename: "platform6.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Platform+6", tags: ["platformer"] },
+                { name: "Dungeon Escape", category: "Platformer", filename: "platform7.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Platform+7", tags: ["platformer"] },
+                { name: "Ice Climber", category: "Platformer", filename: "platform8.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Platform+8", tags: ["platformer"] },
+                { name: "Treasure Hunter", category: "Platformer", filename: "platform9.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Platform+9", tags: ["platformer"] },
+                { name: "Castle Quest", category: "Platformer", filename: "platform10.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Platform+10", tags: ["platformer"] },
+                { name: "Pirate Jump", category: "Platformer", filename: "platform11.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Platform+11", tags: ["platformer"] },
+                { name: "Robot Run", category: "Platformer", filename: "platform12.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Platform+12", tags: ["platformer"] },
+                { name: "Alien Adventure", category: "Platformer", filename: "platform13.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Platform+13", tags: ["platformer"] },
+                { name: "Ghost House", category: "Platformer", filename: "platform14.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Platform+14", tags: ["platformer"] },
+                { name: "Dino Run", category: "Platformer", filename: "platform15.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Platform+15", tags: ["platformer"] },
+                { name: "Time Traveler", category: "Platformer", filename: "platform16.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Platform+16", tags: ["platformer"] }
+            ],
+            action: [
+                { name: "Street Fighter", category: "Action", filename: "action1.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Action+1", tags: ["action"] },
+                { name: "Zombie Survival", category: "Action", filename: "action2.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Action+2", tags: ["action"] },
+                { name: "Ninja Combat", category: "Action", filename: "action3.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Action+3", tags: ["action"] },
+                { name: "Space Invaders", category: "Action", filename: "action4.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Action+4", tags: ["action"] },
+                { name: "Dragon Battle", category: "Action", filename: "action5.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Action+5", tags: ["action"] },
+                { name: "Robot Wars", category: "Action", filename: "action6.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Action+6", tags: ["action"] },
+                { name: "Pirate Battle", category: "Action", filename: "action7.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Action+7", tags: ["action"] },
+                { name: "Super Hero", category: "Action", filename: "action8.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Action+8", tags: ["action"] },
+                { name: "Martial Arts", category: "Action", filename: "action9.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Action+9", tags: ["action"] },
+                { name: "Monster Hunter", category: "Action", filename: "action10.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Action+10", tags: ["action"] },
+                { name: "Gladiator", category: "Action", filename: "action11.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Action+11", tags: ["action"] },
+                { name: "Samurai", category: "Action", filename: "action12.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Action+12", tags: ["action"] },
+                { name: "Viking Raid", category: "Action", filename: "action13.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Action+13", tags: ["action"] },
+                { name: "Kung Fu Master", category: "Action", filename: "action14.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Action+14", tags: ["action"] },
+                { name: "Boxing Champ", category: "Action", filename: "action15.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Action+15", tags: ["action"] },
+                { name: "Wrestling", category: "Action", filename: "action16.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Action+16", tags: ["action"] }
+            ],
+            adventure: [
+                { name: "Lost Island", category: "Adventure", filename: "adventure1.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Adventure+1", tags: ["adventure"] },
+                { name: "Mystery Cave", category: "Adventure", filename: "adventure2.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Adventure+2", tags: ["adventure"] },
+                { name: "Pirate Treasure", category: "Adventure", filename: "adventure3.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Adventure+3", tags: ["adventure"] },
+                { name: "Dragon Quest", category: "Adventure", filename: "adventure4.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Adventure+4", tags: ["adventure"] },
+                { name: "Space Explorer", category: "Adventure", filename: "adventure5.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Adventure+5", tags: ["adventure"] },
+                { name: "Jungle Expedition", category: "Adventure", filename: "adventure6.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Adventure+6", tags: ["adventure"] },
+                { name: "Time Travel", category: "Adventure", filename: "adventure7.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Adventure+7", tags: ["adventure"] },
+                { name: "Underwater", category: "Adventure", filename: "adventure8.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Adventure+8", tags: ["adventure"] },
+                { name: "Haunted Mansion", category: "Adventure", filename: "adventure9.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Adventure+9", tags: ["adventure"] },
+                { name: "Wild West", category: "Adventure", filename: "adventure10.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Adventure+10", tags: ["adventure"] },
+                { name: "Ancient Egypt", category: "Adventure", filename: "adventure11.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Adventure+11", tags: ["adventure"] },
+                { name: "Medieval Kingdom", category: "Adventure", filename: "adventure12.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Adventure+12", tags: ["adventure"] },
+                { name: "Fairy Tale", category: "Adventure", filename: "adventure13.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Adventure+13", tags: ["adventure"] },
+                { name: "Robot World", category: "Adventure", filename: "adventure14.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Adventure+14", tags: ["adventure"] },
+                { name: "Magic Forest", category: "Adventure", filename: "adventure15.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Adventure+15", tags: ["adventure"] },
+                { name: "Dinosaur Land", category: "Adventure", filename: "adventure16.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Adventure+16", tags: ["adventure"] }
+            ],
+            strategy: [
+                { name: "War Tactics", category: "Strategy", filename: "strategy1.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Strategy+1", tags: ["strategy"] },
+                { name: "Kingdom Builder", category: "Strategy", filename: "strategy2.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Strategy+2", tags: ["strategy"] },
+                { name: "Space Empire", category: "Strategy", filename: "strategy3.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Strategy+3", tags: ["strategy"] },
+                { name: "Chess Master", category: "Strategy", filename: "strategy4.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Strategy+4", tags: ["strategy"] },
+                { name: "Tower Defense", category: "Strategy", filename: "strategy5.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Strategy+5", tags: ["strategy"] },
+                { name: "Civilization", category: "Strategy", filename: "strategy6.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Strategy+6", tags: ["strategy"] },
+                { name: "Risk", category: "Strategy", filename: "strategy7.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Strategy+7", tags: ["strategy"] },
+                { name: "Battleship", category: "Strategy", filename: "strategy8.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Strategy+8", tags: ["strategy"] },
+                { name: "Puzzle War", category: "Strategy", filename: "strategy9.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Strategy+9", tags: ["strategy"] },
+                { name: "Army Commander", category: "Strategy", filename: "strategy10.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Strategy+10", tags: ["strategy"] },
+                { name: "Naval Battle", category: "Strategy", filename: "strategy11.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Strategy+11", tags: ["strategy"] },
+                { name: "Air Combat", category: "Strategy", filename: "strategy12.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Strategy+12", tags: ["strategy"] },
+                { name: "Zombie Defense", category: "Strategy", filename: "strategy13.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Strategy+13", tags: ["strategy"] },
+                { name: "Robot War", category: "Strategy", filename: "strategy14.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Strategy+14", tags: ["strategy"] },
+                { name: "Fantasy War", category: "Strategy", filename: "strategy15.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Strategy+15", tags: ["strategy"] },
+                { name: "Future War", category: "Strategy", filename: "strategy16.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Strategy+16", tags: ["strategy"] }
+            ],
+            sports: [
+                { name: "Basketball Pro", category: "Sports", filename: "sports1.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Sports+1", tags: ["sports"] },
+                { name: "Football Champ", category: "Sports", filename: "sports2.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Sports+2", tags: ["sports"] },
+                { name: "Soccer Star", category: "Sports", filename: "sports3.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Sports+3", tags: ["sports"] },
+                { name: "Tennis Pro", category: "Sports", filename: "sports4.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Sports+4", tags: ["sports"] },
+                { name: "Golf Master", category: "Sports", filename: "sports5.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Sports+5", tags: ["sports"] },
+                { name: "Baseball", category: "Sports", filename: "sports6.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Sports+6", tags: ["sports"] },
+                { name: "Hockey", category: "Sports", filename: "sports7.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Sports+7", tags: ["sports"] },
+                { name: "Boxing", category: "Sports", filename: "sports8.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Sports+8", tags: ["sports"] },
+                { name: "Swimming", category: "Sports", filename: "sports9.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Sports+9", tags: ["sports"] },
+                { name: "Cycling", category: "Sports", filename: "sports10.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Sports+10", tags: ["sports"] },
+                { name: "Skiing", category: "Sports", filename: "sports11.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Sports+11", tags: ["sports"] },
+                { name: "Snowboarding", category: "Sports", filename: "sports12.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Sports+12", tags: ["sports"] },
+                { name: "Surfing", category: "Sports", filename: "sports13.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Sports+13", tags: ["sports"] },
+                { name: "Skateboarding", category: "Sports", filename: "sports14.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Sports+14", tags: ["sports"] },
+                { name: "Wrestling", category: "Sports", filename: "sports15.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Sports+15", tags: ["sports"] },
+                { name: "MMA", category: "Sports", filename: "sports16.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Sports+16", tags: ["sports"] }
+            ],
+            shooting: [
+                { name: "Sniper Elite", category: "Shooting", filename: "shooting1.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Shooting+1", tags: ["shooting"] },
+                { name: "Zombie Shooter", category: "Shooting", filename: "shooting2.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Shooting+2", tags: ["shooting"] },
+                { name: "Space Invaders", category: "Shooting", filename: "shooting3.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Shooting+3", tags: ["shooting"] },
+                { name: "Western Duel", category: "Shooting", filename: "shooting4.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Shooting+4", tags: ["shooting"] },
+                { name: "Army Combat", category: "Shooting", filename: "shooting5.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Shooting+5", tags: ["shooting"] },
+                { name: "Tank Battle", category: "Shooting", filename: "shooting6.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Shooting+6", tags: ["shooting"] },
+                { name: "Plane Combat", category: "Shooting", filename: "shooting7.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Shooting+7", tags: ["shooting"] },
+                { name: "Battleship", category: "Shooting", filename: "shooting8.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Shooting+8", tags: ["shooting"] },
+                { name: "Alien Invasion", category: "Shooting", filename: "shooting9.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Shooting+9", tags: ["shooting"] },
+                { name: "Robot War", category: "Shooting", filename: "shooting10.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Shooting+10", tags: ["shooting"] },
+                { name: "Dino Hunter", category: "Shooting", filename: "shooting11.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Shooting+11", tags: ["shooting"] },
+                { name: "Pirate Battle", category: "Shooting", filename: "shooting12.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Shooting+12", tags: ["shooting"] },
+                { name: "Medieval War", category: "Shooting", filename: "shooting13.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Shooting+13", tags: ["shooting"] },
+                { name: "Future War", category: "Shooting", filename: "shooting14.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Shooting+14", tags: ["shooting"] },
+                { name: "Stealth Ops", category: "Shooting", filename: "shooting15.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Shooting+15", tags: ["shooting"] },
+                { name: "SWAT Team", category: "Shooting", filename: "shooting16.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Shooting+16", tags: ["shooting"] }
+            ],
+            multiplayer: [
+                { name: "Battle Royale", category: "Multiplayer", filename: "multi1.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Multi+1", tags: ["multiplayer"] },
+                { name: "Car Racing", category: "Multiplayer", filename: "multi2.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Multi+2", tags: ["multiplayer"] },
+                { name: "Tank War", category: "Multiplayer", filename: "multi3.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Multi+3", tags: ["multiplayer"] },
+                { name: "Space Combat", category: "Multiplayer", filename: "multi4.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Multi+4", tags: ["multiplayer"] },
+                { name: "Football", category: "Multiplayer", filename: "multi5.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Multi+5", tags: ["multiplayer"] },
+                { name: "Chess", category: "Multiplayer", filename: "multi6.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Multi+6", tags: ["multiplayer"] },
+                { name: "Checkers", category: "Multiplayer", filename: "multi7.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Multi+7", tags: ["multiplayer"] },
+                { name: "Poker", category: "Multiplayer", filename: "multi8.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Multi+8", tags: ["multiplayer"] },
+                { name: "Battleship", category: "Multiplayer", filename: "multi9.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Multi+9", tags: ["multiplayer"] },
+                { name: "Word Game", category: "Multiplayer", filename: "multi10.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Multi+10", tags: ["multiplayer"] },
+                { name: "Drawing Game", category: "Multiplayer", filename: "multi11.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Multi+11", tags: ["multiplayer"] },
+                { name: "Quiz Game", category: "Multiplayer", filename: "multi12.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Multi+12", tags: ["multiplayer"] },
+                { name: "Trivia", category: "Multiplayer", filename: "multi13.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Multi+13", tags: ["multiplayer"] },
+                { name: "Pictionary", category: "Multiplayer", filename: "multi14.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Multi+14", tags: ["multiplayer"] },
+                { name: "Scrabble", category: "Multiplayer", filename: "multi15.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Multi+15", tags: ["multiplayer"] },
+                { name: "Bingo", category: "Multiplayer", filename: "multi16.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Multi+16", tags: ["multiplayer"] }
+            ],
+            idle: [
+                { name: "Cookie Clicker", category: "Idle", filename: "idle1.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Idle+1", tags: ["idle"] },
+                { name: "Miner", category: "Idle", filename: "idle2.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Idle+2", tags: ["idle"] },
+                { name: "Factory", category: "Idle", filename: "idle3.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Idle+3", tags: ["idle"] },
+                { name: "Space", category: "Idle", filename: "idle4.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Idle+4", tags: ["idle"] },
+                { name: "Farm", category: "Idle", filename: "idle5.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Idle+5", tags: ["idle"] },
+                { name: "City", category: "Idle", filename: "idle6.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Idle+6", tags: ["idle"] },
+                { name: "Universe", category: "Idle", filename: "idle7.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Idle+7", tags: ["idle"] },
+                { name: "Adventure", category: "Idle", filename: "idle8.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Idle+8", tags: ["idle"] },
+                { name: "Dungeon", category: "Idle", filename: "idle9.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Idle+9", tags: ["idle"] },
+                { name: "Pirate", category: "Idle", filename: "idle10.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Idle+10", tags: ["idle"] },
+                { name: "Ninja", category: "Idle", filename: "idle11.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Idle+11", tags: ["idle"] },
+                { name: "Zombie", category: "Idle", filename: "idle12.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Idle+12", tags: ["idle"] },
+                { name: "Robot", category: "Idle", filename: "idle13.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Idle+13", tags: ["idle"] },
+                { name: "Dinosaur", category: "Idle", filename: "idle14.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Idle+14", tags: ["idle"] },
+                { name: "Magic", category: "Idle", filename: "idle15.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Idle+15", tags: ["idle"] },
+                { name: "Science", category: "Idle", filename: "idle16.html", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Idle+16", tags: ["idle"] }
+            ]
         };
 
         // Original JavaScript Logic with Fullscreen Fixes
@@ -312,7 +531,19 @@
             const container = document.getElementById('games-container');
             container.innerHTML = '';
             
-            const games = gamesDB[category];
+            let games = [];
+            if (category === 'home') {
+                // For home, show all games with 'popular' tag
+                games = Object.values(gamesDB).flat().filter(game => 
+                    game.tags && game.tags.includes('popular')
+                );
+            } else {
+                // For other categories, show games with matching tag
+                games = Object.values(gamesDB).flat().filter(game => 
+                    game.tags && game.tags.includes(category)
+                );
+            }
+            
             const title = document.getElementById('page-title');
             
             title.textContent = category === 'home' 
@@ -375,7 +606,8 @@
             
             const results = Object.values(gamesDB).flat().filter(game => 
                 game.name.toLowerCase().includes(query) || 
-                game.category.toLowerCase().includes(query)
+                game.category.toLowerCase().includes(query) ||
+                (game.tags && game.tags.some(tag => tag.includes(query)))
             );
 
             if (!results.length) {
@@ -467,6 +699,46 @@
             const isOpen = menu.classList.toggle('hidden');
             document.body.classList.toggle('menu-open', !isOpen);
             document.body.style.overflow = isOpen ? 'auto' : 'hidden';
+        }
+
+        function changeFavicon(iconUrl, title) {
+            const favicon = document.getElementById('favicon');
+            favicon.href = iconUrl;
+            document.title = title;
+            
+            // Save to localStorage
+            localStorage.setItem('favicon', iconUrl);
+            localStorage.setItem('siteTitle', title);
+            
+            // Update site title in header
+            document.getElementById('site-title').textContent = title;
+        }
+
+        // Load saved favicon and title
+        window.addEventListener('load', () => {
+            const savedFavicon = localStorage.getItem('favicon');
+            const savedTitle = localStorage.getItem('siteTitle');
+            
+            if (savedFavicon) {
+                document.getElementById('favicon').href = savedFavicon;
+            }
+            
+            if (savedTitle) {
+                document.title = savedTitle;
+                document.getElementById('site-title').textContent = savedTitle;
+            }
+        });
+
+        function exitFullscreen() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
         }
     </script>
 </body>
