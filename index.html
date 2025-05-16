@@ -18,18 +18,31 @@
         }
         .hover\:shadow-glow {
   position: relative;
-  overflow: hidden; /* Fixes black corners */
+  /* Critical anti-flicker properties */
+  transform: translateZ(0);
   backface-visibility: hidden;
-  transition: box-shadow 0.2s ease-out;
+  will-change: box-shadow;
+  isolation: isolate;
 }
 
-.hover\:shadow-glow:hover {
-  box-shadow: 
-    0 0 8px rgba(255, 255, 255, 0.9),  /* Tighter inner glow */
-    0 0 12px rgba(255, 255, 255, 0.6); /* Subtle outer spread */
-  
-  /* Fix for black corners */
-  outline: 1px solid transparent;
+.hover\:shadow-glow::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: inherit;
+  /* Compact neon glow */
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
+  opacity: 0;
+  transition: opacity 0.15s linear;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.hover\:shadow-glow:hover::before {
+  opacity: 1;
 }
     body {
             background-color: #050505;
@@ -325,7 +338,7 @@
                 { name: "Slope", category: "Action", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Slope", filename: "/games/slope.html", tags: ["action", "popular"] },
                 { name: "Minecraft 1.11.2", category: "Adventure", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Minecraft", filename: "/games/minecraft.html", tags: ["adventure", "popular"] },
                 { name: "Temple Run", category: "Action", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Temple+Run", filename: "templerun.html", tags: ["action", "popular"] },
-                { name: "Eggy Car", category: "Racing", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Eggy+Car", filename: "/games/eggycar.html", tags: ["racing", "popular"] },
+                { name: "Eggy Car (Not Working)", category: "Racing", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Eggy+Car", filename: "/games/eggycar.html", tags: ["racing", "popular"] },
                 { name: "Among Us", category: "Multiplayer", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Among+Us", filename: "amongus.html", tags: ["multiplayer", "popular"] },
                 { name: "Cookie Clicker", category: "Idle", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Cookie+Clicker", filename: "cookieclicker.html", tags: ["idle", "popular"] },
                 { name: "Super Mario Bros", category: "Platformer", thumbnail: "https://via.placeholder.com/300x200/333/fff?text=Mario", filename: "mario.html", tags: ["platformer", "popular"] },
