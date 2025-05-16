@@ -16,9 +16,19 @@
             transform: translateY(0);
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .hover\:shadow-glow:hover {
-        box-shadow: 
-        0 0 8px rgba(255, 255, 255, 0.8),  /* Inner bright layer */
+        .hover\:shadow-glow {
+  /* Hardware acceleration and flicker prevention */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: box-shadow, text-shadow; /* Prepares browser for animation */
+  transition: 
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    text-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover\:shadow-glow:hover {
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
 }
         body {
             background-color: #050505;
