@@ -18,25 +18,24 @@
         }
         .hover\:shadow-glow {
   position: relative;
-  /* Critical anti-flicker properties */
-  transform: translateZ(0);
+  transform: translateZ(0); /* GPU acceleration */
   backface-visibility: hidden;
-  will-change: box-shadow;
-  isolation: isolate;
 }
 
 .hover\:shadow-glow::before {
   content: '';
   position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   border-radius: inherit;
-  /* Compact neon glow */
-  box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
+  /* Dual-layer pure white glow */
+  box-shadow: 
+    0 0 2px rgba(255, 255, 255, 1),
+    0 0 8px rgba(255, 255, 255, 0.8);
   opacity: 0;
-  transition: opacity 0.15s linear;
+  transition: opacity 0.2s ease-out;
   pointer-events: none;
   z-index: -1;
 }
