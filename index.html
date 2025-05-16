@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HiddenGames</title>
+    <body>
+  HiddenGames
+</body>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
@@ -217,72 +219,36 @@
                 <i class="fas fa-mouse-pointer w-5 text-center"></i> Idle & Clicker
             </button>
             
-<h3 class="text-white/70 text-sm mt-6 mb-3 px-4 uppercase tracking-wider">Appearance</h3>
-<div class="favicon-selector">
-    <button onclick="toggleFaviconDropdown()" class="block w-full text-left text-white py-3 px-4 rounded-lg hover:bg-white/5 transition flex items-center gap-3">
-        <i class="fas fa-image w-5 text-center"></i> Change Favicon
-    </button>
-    <div class="favicon-dropdown hidden" id="favicon-dropdown">
-        <div class="favicon-option" onclick="changeFavicon('/assets/default_favicon.png', 'HiddenGames')">
-            <img src="/assets/default_favicon.png" alt="Default">
-            <span>Default</span>
-        </div>
-        <div class="favicon-option" onclick="changeFavicon('https://www.google.com/favicon.ico', 'Google')">
-            <img src="https://www.google.com/favicon.ico" alt="Google">
-            <span>Google</span>
-        </div>
-        <div class="favicon-option" onclick="changeFavicon('https://www.youtube.com/favicon.ico', 'YouTube')">
-            <img src="https://www.youtube.com/favicon.ico" alt="YouTube">
-            <span>YouTube</span>
-        </div>
-        <div class="favicon-option" onclick="changeFavicon('https://powerschool.com/favicon.ico', 'PowerSchool')">
-            <img src="https://powerschool.com/favicon.ico" alt="PowerSchool">
-            <span>PowerSchool</span>
-        </div>
-        <div class="favicon-option" onclick="changeFavicon('https://upload.wikimedia.org/wikipedia/commons/5/59/Google_Classroom_Logo.png', 'Google Classroom')">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/5/59/Google_Classroom_Logo.png" alt="Google Classroom">
-            <span>Google Classroom</span>
-        </div>
+            <h3 class="text-white/70 text-sm mt-6 mb-3 px-4 uppercase tracking-wider">Appearance</h3>
+            <div class="favicon-selector">
+                <button onclick="toggleFaviconDropdown()" class="block w-full text-left text-white py-3 px-4 rounded-lg hover:bg-white/5 transition flex items-center gap-3">
+                    <i class="fas fa-image w-5 text-center"></i> Change Favicon
+                </button>
+                <div class="favicon-dropdown" id="favicon-dropdown">
+                    <div class="favicon-option" onclick="changeFavicon('/assests/default_favicon.png', 'HiddenGames')">
+                        <img src="/assests/default_favicon.png" alt="Default">
+                        <span>Default</span>
+                    </div>
+                    <div class="favicon-option" onclick="changeFavicon('https://www.google.com/favicon.ico', 'Google')">
+                        <img src="https://www.google.com/favicon.ico" alt="Google">
+                        <span>Google</span>
+                    </div>
+                    <div class="favicon-option" onclick="changeFavicon('https://powerschool.com/favicon.ico', 'PowerSchool')">
+                        <img src="https://powerschool.com/favicon.ico" alt="PowerSchool">
+                        <span>PowerSchool</span>
+                    </div>
+                    <div class="favicon-option" onclick="changeFavicon('https://upload.wikimedia.org/wikipedia/commons/5/59/Google_Classroom_Logo.png', 'Google Class')">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/59/Google_Classroom_Logo.png" alt="Google Classroom">
+                        <span>Google Classroom</span>
+                    </div>
+                    <div class="favicon-option" onclick="changeFavicon('https://www.youtube.com/favicon.ico', 'YouTube')">
+                        <img src="https://www.youtube.com/favicon.ico" alt="YouTube">
+                        <span>YouTube</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
     </div>
-</div>
-</nav>
-</div>
-
-<script>
-function toggleFaviconDropdown() {
-    const dropdown = document.getElementById('favicon-dropdown');
-    dropdown.classList.toggle('hidden');
-}
-
-function changeFavicon(iconUrl, title) {
-    // Change the favicon
-    const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-    link.type = 'image/x-icon';
-    link.rel = 'shortcut icon';
-    link.href = iconUrl;
-    document.head.appendChild(link);
-    
-    // Change the title in the browser tab
-    document.title = title;
-    
-    // Close the dropdown
-    document.getElementById('favicon-dropdown').classList.add('hidden');
-    
-    // Optional: Save preference to localStorage
-    localStorage.setItem('favicon', iconUrl);
-    localStorage.setItem('tabTitle', title);
-}
-
-// Load saved preferences on page load
-document.addEventListener('DOMContentLoaded', function() {
-    const savedIcon = localStorage.getItem('favicon');
-    const savedTitle = localStorage.getItem('tabTitle');
-    
-    if (savedIcon) {
-        changeFavicon(savedIcon, savedTitle || 'HiddenGames');
-    }
-});
-</script>
 
     <main class="flex-grow container mx-auto px-0 py-8">
         <h2 id="page-title" class="text-2xl font-bold text-white mb-8 text-center">Popular Games</h2>
