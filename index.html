@@ -17,18 +17,32 @@
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .hover\:shadow-glow {
-  /* Hardware acceleration and flicker prevention */
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  will-change: box-shadow, text-shadow; /* Prepares browser for animation */
-  transition: 
-    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    text-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative; /* Needed for pseudo-element */
+  transition: box-shadow 0.2s ease-out;
+  backface-visibility: hidden; /* Prevents flickering */
 }
 
 .hover\:shadow-glow:hover {
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
-  text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+}
+
+/* Alternative: Even smoother with pseudo-element */
+.hover\:shadow-glow::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+  pointer-events: none; /* Allows clicks through */
+}
+
+.hover\:shadow-glow:hover::before {
+  opacity: 1;
 }
         body {
             background-color: #050505;
